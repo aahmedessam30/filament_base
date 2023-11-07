@@ -1,0 +1,11 @@
+<?php
+
+namespace {{ namespace }};
+
+trait {{ trait_name }}
+{
+    public function __construct()
+    {
+        //
+    }
+}

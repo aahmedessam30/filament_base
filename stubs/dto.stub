@@ -1,0 +1,56 @@
+<?php
+
+namespace {{ namespace }};
+
+class {{ class_name }}
+{
+    public function __construct()
+    {
+        //
+    }
+
+    public static function toArray()
+    {
+        //
+    }
+
+    public static function fromArray($array)
+    {
+        //
+    }
+
+    public static function toJson()
+    {
+        //
+    }
+
+    public static function fromJson($json)
+    {
+        //
+    }
+
+    public static function toCollection()
+    {
+        //
+    }
+
+    public static function fromCollection($collection)
+    {
+        //
+    }
+
+    public static function toModel($model)
+    {
+        //
+    }
+
+    public static function fromModel($model)
+    {
+        //
+    }
+
+    public static function make(...$args)
+    {
+        //
+    }
+}
