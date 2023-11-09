@@ -2,11 +2,10 @@
 
 namespace App\Channels;
 
+use Twilio\Rest\Client;
 use App\Messages\TwilioWhatsAppMessage;
 use Illuminate\Notifications\Notification;
-use Twilio\Exceptions\ConfigurationException;
-use Twilio\Exceptions\TwilioException;
-use Twilio\Rest\Client;
+use Twilio\Exceptions\{ConfigurationException, TwilioException};
 
 class TwilioChannel
 {
@@ -17,26 +16,38 @@ class TwilioChannel
     public function send($notifiable, Notification $notification)
     {
         $message   = $notification->toTwilio($notifiable);
-        $fromAndTo = $this->getFromAndTo($notification, $notifiable);
-        $to        = $fromAndTo['to'];
-        $from      = $fromAndTo['from'];
         $twilio    = new Client(config('services.twilio.sid'), config('services.twilio.token'));
 
-        return $twilio->messages->create($to, ["from" => $from, "body" => $message->content]);
+        return $twilio->messages->create($this->getTo($notifiable, $message), $this->getParams($message));
     }
 
-    protected function getFromAndTo(Notification $notification, $notifiable)
+    private function getTo($notifiable, $message): string
     {
-        $message = $notification->toTwilio($notifiable);
+        return match (get_class($message)) {
+            TwilioWhatsAppMessage::class => 'whatsapp:' . $notifiable->routeNotificationFor('Twilio'),
+            default                      => $notifiable->routeNotificationFor('Twilio'),
+        };
+    }
+
+    private function getFrom($message): string
+    {
+        return match (get_class($message)) {
+            TwilioWhatsAppMessage::class => 'whatsapp:' . config('services.twilio.whatsapp_from'),
+            default                      => config('services.twilio.from'),
+        };
+    }
+
+    private function getParams($message)
+    {
+        $params = [
+            'from' => $this->getFrom($message),
+            'body' => $message->content,
+        ];
 
         if ($message instanceof TwilioWhatsAppMessage) {
-            $to   = 'whatsapp:' . $notifiable->routeNotificationFor('Twilio');
-            $from = 'whatsapp:' . config('services.twilio.whatsapp_from');
-        } else {
-            $to   = $notifiable->routeNotificationFor('Twilio');
-            $from = config('services.twilio.from');
+            $params['template_name'] = config('services.twilio.whatsapp_template');
         }
 
-        return ['to' => $to, 'from' => $from];
+        return $params;
     }
 }

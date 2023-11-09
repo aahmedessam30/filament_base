@@ -31,4 +31,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'twilio' => [
+        'active' => env('TWILIO_ACTIVE', false),
+        'sid' => env('TWILIO_AUTH_SID'),
+        'token' => env('TWILIO_AUTH_TOKEN'),
+        'whatsapp_from' => env('TWILIO_WHATSAPP_FROM'),
+        'whatsapp_template' => env('TWILIO_WHATSAPP_TEMPLATE'),
+    ],
+
+    'firebase_server_key' => env('FIREBASE_SERVER_KEY'),
 ];
